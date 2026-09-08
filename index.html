@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F15A22">
+<title>Hoke Safety Training</title>
+<meta name="apple-mobile-web-app-title" content="Hoke Training">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+  :root{
+    --orange:#F15A22; --orange-dark:#C2461A; --orange-light:#FCE3D8;
+    --black:#1A1A1A; --silver-dark:#7A7A7A; --silver:#C0C0C0; --silver-light:#F2F2F2;
+    --page:#eef1f7; --card:#ffffff; --line:#d7dbe2;
+    --ok-bg:#e6f6ee; --ok-fg:#0f6e56; --ok-bd:#b7e3cf;
+    --vf-bg:#fef3e2; --vf-fg:#92590a; --vf-bd:#f5d9a8;
+    --err-bg:#fdecec; --err-fg:#a12626; --err-bd:#f3c4c4;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--page);color:var(--black);-webkit-text-size-adjust:100%}
+  header{background:#fff;border-bottom:1px solid var(--silver);position:sticky;top:0;z-index:20;box-shadow:0 1px 3px rgba(26,26,26,.08)}
+  .wrap{max-width:720px;margin:0 auto;padding:12px 16px}
+  .brandrow{display:flex;align-items:center;gap:14px}
+  .logo{height:40px;width:auto;max-width:240px;object-fit:contain;display:block}
+  .logo.missing{display:none}
+  .titlebox{line-height:1.3;min-width:0}
+  .apptitle{font-size:15px;font-weight:600;margin:0;display:flex;align-items:center;gap:6px}
+  .loc{font-size:12px;color:var(--silver-dark);margin:1px 0 0}
+  main{max-width:720px;margin:0 auto;padding:16px 16px 90px}
+
+  .steps{display:flex;gap:6px;margin:0 0 16px}
+  .step{flex:1;height:4px;border-radius:2px;background:var(--silver)}
+  .step.done{background:var(--orange)}
+  .step.active{background:var(--orange-dark)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(26,26,26,.05)}
+  .card h2{font-size:17px;margin:0 0 4px}
+  .card p.sub{font-size:13.5px;color:var(--silver-dark);margin:0 0 14px;line-height:1.5}
+
+  .who{display:flex;align-items:center;gap:12px;background:var(--orange-light);border:1px solid rgba(241,90,34,.3);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+  .who .nm{font-weight:700;font-size:15px;color:var(--orange-dark)}
+  .who .sm{font-size:12.5px;color:var(--orange-dark);opacity:.85}
+
+  .videobox{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;margin-bottom:12px}
+  .videobox iframe,.videobox video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+  .vplaceholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#bbb;font-size:13px;text-align:center;padding:20px}
+
+  .prog{height:8px;background:var(--silver-light);border-radius:4px;overflow:hidden;margin:10px 0 6px}
+  .prog span{display:block;height:100%;width:0;background:var(--orange);transition:width .3s}
+  .progtext{font-size:12.5px;color:var(--silver-dark);display:flex;justify-content:space-between;gap:10px}
+
+  .btn{display:block;width:100%;padding:14px 16px;font-size:16px;font-weight:700;border-radius:10px;border:none;
+       background:var(--orange);color:#fff;cursor:pointer;transition:background .15s,opacity .15s;font-family:inherit}
+  .btn:hover:not(:disabled){background:var(--orange-dark)}
+  .btn:disabled{background:var(--silver);color:#fff;cursor:not-allowed}
+  .btn.ghost{background:#fff;color:var(--orange);border:1px solid var(--orange)}
+  .btn.ghost:hover:not(:disabled){background:var(--orange-light)}
+  .btnnote{font-size:12.5px;color:var(--silver-dark);text-align:center;margin-top:8px;line-height:1.45}
+
+  .q{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+  .q:first-of-type{border-top:none;padding-top:0;margin-top:0}
+  .qtext{font-weight:600;font-size:15px;margin:0 0 10px;line-height:1.4}
+  .opt{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;
+       margin-bottom:8px;cursor:pointer;font-size:14.5px;line-height:1.4;background:#fff;transition:border-color .12s,background .12s}
+  .opt:hover{border-color:var(--orange)}
+  .opt input{margin:2px 0 0;flex:0 0 auto;accent-color:var(--orange);width:18px;height:18px}
+  .opt.right{border-color:var(--ok-bd);background:var(--ok-bg)}
+  .opt.wrong{border-color:var(--err-bd);background:var(--err-bg)}
+
+  .affirm{background:var(--silver-light);border:1px solid var(--line);border-radius:9px;padding:13px 14px;font-size:13.5px;line-height:1.55;margin-bottom:14px}
+  label.fld{display:block;font-size:13px;font-weight:600;margin:0 0 6px}
+  input[type=text]{width:100%;padding:12px 13px;font-size:16px;border:1px solid var(--silver);border-radius:8px;
+                   font-family:inherit;color:var(--black);background:#fff;outline:none}
+  input[type=text]:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(241,90,34,.18)}
+
+  .note{border-radius:9px;padding:12px 14px;font-size:13.5px;line-height:1.5;margin-bottom:14px;border:1px solid}
+  .note.ok{background:var(--ok-bg);color:var(--ok-fg);border-color:var(--ok-bd)}
+  .note.warn{background:var(--vf-bg);color:var(--vf-fg);border-color:var(--vf-bd)}
+  .note.err{background:var(--err-bg);color:var(--err-fg);border-color:var(--err-bd)}
+
+  .receipt{text-align:center;padding:8px 0 4px}
+  .receipt .chk{width:58px;height:58px;margin:0 auto 12px;border-radius:50%;background:var(--ok-bg);
+                display:flex;align-items:center;justify-content:center;border:2px solid var(--ok-bd)}
+  .receipt h2{font-size:20px;margin:0 0 6px}
+  .receipt .conf{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:19px;font-weight:700;
+                 color:var(--orange-dark);background:var(--orange-light);border:1px solid rgba(241,90,34,.3);
+                 border-radius:8px;padding:10px 14px;display:inline-block;margin:6px 0 12px;letter-spacing:.5px}
+  .receipt dl{text-align:left;font-size:13.5px;margin:14px 0 0;border-top:1px solid var(--line);padding-top:12px}
+  .receipt dl div{display:flex;justify-content:space-between;gap:14px;padding:5px 0}
+  .receipt dt{color:var(--silver-dark)}
+  .receipt dd{margin:0;font-weight:600;text-align:right}
+
+  .hidden{display:none!important}
+  footer{max-width:720px;margin:0 auto;padding:6px 16px 40px;color:var(--silver-dark);font-size:11.5px;text-align:center;line-height:1.5}
+  .spin{width:34px;height:34px;border:3px solid var(--silver-light);border-top-color:var(--orange);border-radius:50%;
+        margin:26px auto;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brandrow">
+      <img class="logo" id="logo" src="data:image/png;base64,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" alt="Hoke Industrial LLC">
+      <div class="titlebox">
+        <p class="apptitle">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F15A22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+          <span id="hdrTitle">Hoke Safety Training</span>
+        </p>
+        <p class="loc">Hoke Industrial LLC &middot; Lufkin, TX</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="boot"><div class="spin"></div></div>
+
+  <div id="app" class="hidden">
+    <div class="steps">
+      <div class="step" id="s1"></div><div class="step" id="s2"></div><div class="step" id="s3"></div>
+    </div>
+
+    <div class="who" id="who">
+      <div>
+        <div class="nm" id="whoName">—</div>
+        <div class="sm" id="whoSub"></div>
+      </div>
+    </div>
+
+    <!-- ===== STEP 1: WATCH ===== -->
+    <section class="card" id="stepWatch">
+      <h2 id="courseTitle">Safety Orientation</h2>
+      <p class="sub" id="courseSub"></p>
+      <div id="courseNotice"></div>
+      <div class="videobox" id="videobox">
+        <div class="vplaceholder" id="vph">Loading video…</div>
+      </div>
+      <div class="prog"><span id="progBar"></span></div>
+      <div class="progtext"><span id="progLabel">Not started</span><span id="progPct">0%</span></div>
+      <div style="margin-top:14px">
+        <button class="btn" id="btnWatched" disabled>Continue</button>
+        <p class="btnnote" id="watchNote">Play the video all the way through. Skipping ahead will not count.</p>
+      </div>
+    </section>
+
+    <!-- ===== STEP 2: QUIZ ===== -->
+    <section class="card hidden" id="stepQuiz">
+      <h2>Check your understanding</h2>
+      <p class="sub" id="quizSub"></p>
+      <div id="quizBody"></div>
+      <div id="quizResult"></div>
+      <button class="btn" id="btnQuiz" disabled>Submit answers</button>
+      <p class="btnnote" id="quizNote"></p>
+    </section>
+
+    <!-- ===== STEP 3: SIGN ===== -->
+    <section class="card hidden" id="stepSign">
+      <h2>Acknowledgment</h2>
+      <p class="sub">Read the statement below, then type your full name to sign.</p>
+      <div class="affirm" id="affirmText"></div>
+      <label class="fld" for="sig">Type your full name</label>
+      <input type="text" id="sig" autocomplete="name" autocapitalize="words" spellcheck="false" placeholder="Your full name">
+      <p class="btnnote" style="text-align:left;margin:6px 0 14px" id="sigHint"></p>
+      <div id="signErr"></div>
+      <button class="btn" id="btnSign" disabled>Submit acknowledgment</button>
+      <p class="btnnote">Your name, the time, your score and this training's version are recorded.</p>
+    </section>
+
+    <!-- ===== DONE ===== -->
+    <section class="card hidden" id="stepDone">
+      <div class="receipt">
+        <div class="chk"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0f6e56" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h2>You're done</h2>
+        <p class="sub" style="margin-bottom:2px">Your acknowledgment has been recorded.</p>
+        <div class="conf" id="confNum">—</div>
+        <dl>
+          <div><dt>Name</dt><dd id="rName">—</dd></div>
+          <div><dt>Training</dt><dd id="rCourse">—</dd></div>
+          <div><dt>Completed</dt><dd id="rWhen">—</dd></div>
+          <div><dt>Score</dt><dd id="rScore">—</dd></div>
+        </dl>
+        <p class="btnnote" style="margin-top:16px">Screenshot this page if you want a copy. Nothing else is needed from you.</p>
+      </div>
+    </section>
+
+    <!-- ===== ALREADY DONE ===== -->
+    <section class="card hidden" id="stepAlready">
+      <div class="note ok" style="margin-bottom:14px"><b>You've already completed this training.</b></div>
+      <dl class="receipt" style="margin:0">
+        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13.5px"><span style="color:var(--silver-dark)">Confirmation</span><b id="aConf">—</b></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13.5px"><span style="color:var(--silver-dark)">Completed</span><b id="aWhen">—</b></div>
+      </dl>
+      <button class="btn ghost" id="btnRetake" style="margin-top:16px">Take it again</button>
+      <p class="btnnote">Only take it again if your supervisor asked you to. A new record will be created.</p>
+    </section>
+
+    <div id="fatal"></div>
+  </div>
+</main>
+
+<footer id="foot">Hoke Industrial LLC &middot; Lufkin, TX</footer>
+
+<script>
+/* ============================================================================
+   ==  EDIT THIS BLOCK  =======================================================
+   ============================================================================
+   These are the only settings you normally need to change.
+   Everything below this block is machinery — leave it alone.
+   ========================================================================== */
+
+var CONFIG = {
+
+  /* Paste the Apps Script web app URL here after you deploy it.
+     It looks like: https://script.google.com/macros/s/AKfycb..../exec        */
+  ENDPOINT: "https://script.google.com/macros/s/AKfycbzfokzxjbXqVy5uYs3PecaCKc3qVJZzH0LNbfmI6CoKgKO6ttlGUfL9d9HAsPzR6ssf8w/exec",
+
+  COURSE: {
+    id:      "stella-jones-orientation",   // short code, no spaces. Don't change it later.
+    title:   "SJC Core Orientation — Contractor / Service Provider",
+    version: "2026-09",                    // bump this when the video is revised
+    blurb:   "Stella-Jones requires this before you work at any of their facilities. " +
+             "It runs about 21 minutes. Watch it somewhere you can hear it.",
+
+    /* CORRECTION BANNER — shows above the video in orange.
+       Use this when the client changes a requirement but hasn't re-recorded the video.
+       Set it to "" to hide the banner.                                        */
+    notice:  "One correction before you start: the video says contractors must show an " +
+             "OSHA 10-hour card before taking this orientation. Stella-Jones has dropped " +
+             "that requirement. Everything else in the video still applies.",
+
+    /* THE VIDEO --------------------------------------------------------------
+       type "youtube": set id to the part after v= in the YouTube URL.
+         https://www.youtube.com/watch?v=dQw4w9WgXcQ   ->   id: "dQw4w9WgXcQ"
+       type "file":    set url to a direct .mp4 link instead.                  */
+    video: {
+      type: "youtube",
+      id:   "3G4eklzIgYc",
+      url:  ""
+    },
+
+    /* How much of the video must actually play before Continue unlocks.
+       0.95 = 95%. Scrubbing forward is not credited.                          */
+    requiredWatch: 0.95,
+
+    /* THE QUIZ ---------------------------------------------------------------
+       PLACEHOLDERS — replace with real questions once you've watched the video.
+       "correct" is the position of the right answer, counting from 0.
+       Delete a question by deleting its { ... } block and its comma.
+       Leave the list empty to skip the quiz entirely.                         */
+    quiz: [
+      { q: "You need to lock out a piece of Stella-Jones equipment before you can work on it. Who starts the lockout?",
+        options: [
+          "A Stella-Jones Lockout Authorizing Individual (LAI) — you are not permitted to initiate a lockout",
+          "Whoever on your crew is trained in LOTO",
+          "Your Hoke supervisor, after telling the facility manager",
+          "Anyone, as long as a lock and tag go on"
+        ],
+        correct: 0 },
+
+      { q: "You're welding outside a permanent hot work area. How close does fire protection have to be?",
+        options: [
+          "Somewhere in the building — you know where the extinguishers are",
+          "An ABC extinguisher or charged fire hose within 10 seconds or 25 feet",
+          "Within 100 feet, same as OSHA requires",
+          "On the truck, as long as somebody can go get it"
+        ],
+        correct: 1 },
+
+      { q: "Where does the Job Site Orientation (JSO, SJC-FORM-160) get completed?",
+        options: [
+          "In the office with the facility manager before you head out",
+          "Whenever you get to it — as long as it's done before the job closes",
+          "At the actual jobsite, before work begins. There are no exceptions",
+          "Back at the Hoke shop, then emailed in"
+        ],
+        correct: 2 },
+
+      { q: "Which of these do you have to report to Stella-Jones EH&S?",
+        options: [
+          "Only injuries that need a doctor",
+          "Only things that damaged Stella-Jones property",
+          "Nothing, unless they ask you about it",
+          "All of it — near misses, first aid, spills, damage and injuries"
+        ],
+        correct: 3 },
+
+      { q: "You're working within 10 feet of a railroad track and a railcar is in your way. What do you do?",
+        options: [
+          "Move it yourself if you know how — moving railcars is never permitted",
+          "Move it, as long as somebody spots for you",
+          "Chock the wheels and roll it clear by hand",
+          "Get a Stella-Jones operator to move it for you"
+        ],
+        correct: 0 },
+
+      { q: "What happens to a man who violates a Cardinal Rule — the LOTO or Hot Work programs?",
+        options: [
+          "A written warning, then removal on the second one",
+          "He's off the job for the day and retrained",
+          "He is not permitted on Stella-Jones property for at least a year",
+          "It's between him and his own employer"
+        ],
+        correct: 2 }
+    ],
+
+    /* How many they must get right. */
+    passScore: 5,
+
+    /* The statement they are signing. This is what an auditor will read. */
+    affirmation:
+      "I watched the Stella-Jones Corporation Core EH&S Orientation for Contractors and " +
+      "Service Providers all the way through. I understand the SJC requirements it covers — " +
+      "including the Cardinal Rules for Hazardous Energy Control (LOTO) and Hot Work, the " +
+      "Job Site Orientation, EH&S reporting, PPE, and work on or near railroad tracks — and " +
+      "I agree to follow them at all times while I am on Stella-Jones property. I understand " +
+      "that violating a Cardinal Rule will bar me from Stella-Jones property for at least one " +
+      "year. If there is anything here I did not understand, it is my responsibility to ask my " +
+      "supervisor or the Safety Director before I start work."
+  }
+};
+
+/* ============================================================================
+   ==  END OF EDITABLE BLOCK  =================================================
+   ========================================================================== */
+
+
+(function(){
+"use strict";
+var C = CONFIG.COURSE;
+var $ = function(id){ return document.getElementById(id); };
+var person = null, token = null;
+var watched = 0, duration = 0, gateOpen = false, attempts = 0, lastScore = null;
+var ytPlayer = null, poller = null, lastPos = 0;
+
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+function show(id){ $(id).classList.remove("hidden"); }
+function hide(id){ $(id).classList.add("hidden"); }
+
+function setSteps(n){
+  ["s1","s2","s3"].forEach(function(id,i){
+    var el=$(id); el.className="step"+(i<n-1?" done":(i===n-1?" active":""));
+  });
+}
+
+function fatal(html){
+  $("boot").classList.add("hidden");
+  show("app");
+  ["stepWatch","stepQuiz","stepSign","stepDone","stepAlready","who"].forEach(hide);
+  $("fatal").innerHTML='<div class="note err">'+html+'</div>';
+}
+
+/* ---------- talking to the backend ---------------------------------------- */
+/* Sent as text/plain on purpose: it keeps the browser from firing a CORS
+   preflight, which Apps Script web apps do not answer. The body is still JSON. */
+function apiPost(payload){
+  return fetch(CONFIG.ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  }).then(function(r){ return r.json(); });
+}
+function apiGet(params){
+  var qs = Object.keys(params).map(function(k){
+    return encodeURIComponent(k)+"="+encodeURIComponent(params[k]); }).join("&");
+  return fetch(CONFIG.ENDPOINT+"?"+qs, { method:"GET" }).then(function(r){ return r.json(); });
+}
+
+/* ---------- video: youtube ------------------------------------------------- */
+function startYouTube(){
+  var box=$("videobox");
+  box.innerHTML='<div id="ytframe"></div>';
+  var tag=document.createElement("script");
+  tag.src="https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+  window.onYouTubeIframeAPIReady=function(){
+    ytPlayer=new YT.Player("ytframe",{
+      videoId:C.video.id,
+      playerVars:{rel:0,modestbranding:1,playsinline:1,fs:1},
+      events:{
+        onReady:function(){ duration=ytPlayer.getDuration()||0; startPolling(); },
+        onStateChange:function(e){ if(e.data===YT.PlayerState.ENDED) tick(true); }
+      }
+    });
+  };
+}
+function startPolling(){
+  if(poller) clearInterval(poller);
+  lastPos = ytPlayer? (ytPlayer.getCurrentTime()||0) : 0;
+  poller=setInterval(function(){ tick(false); },500);
+}
+
+/* ---------- video: direct file --------------------------------------------- */
+function startFile(){
+  var box=$("videobox");
+  box.innerHTML='<video id="vid" playsinline controls controlsList="nodownload" preload="metadata"></video>';
+  var v=$("vid");
+  v.src=C.video.url;
+  v.addEventListener("loadedmetadata",function(){ duration=v.duration||0; lastPos=0; });
+  v.addEventListener("timeupdate",function(){ tick(false); });
+  v.addEventListener("ended",function(){ tick(true); });
+}
+
+/* ---------- the watch gate -------------------------------------------------
+   We only credit time that actually played. Each sample, if the position moved
+   forward by a small, plausible amount we add it. A big jump means they dragged
+   the scrubber, so it earns nothing. Rewinding is free — no penalty for it. */
+function tick(ended){
+  var pos = 0;
+  if(C.video.type==="youtube"){ if(!ytPlayer||!ytPlayer.getCurrentTime) return; pos=ytPlayer.getCurrentTime()||0; if(!duration) duration=ytPlayer.getDuration()||0; }
+  else { var v=$("vid"); if(!v) return; pos=v.currentTime||0; if(!duration) duration=v.duration||0; }
+
+  var delta = pos - lastPos;
+  if(delta > 0 && delta < 1.5) watched += delta;   // real playback
+  lastPos = pos;
+
+  if(ended && duration) watched = Math.max(watched, duration * C.requiredWatch);
+  paint();
+}
+
+function paint(){
+  var need = (duration||0) * C.requiredWatch;
+  var pct  = duration ? Math.min(100, Math.round(watched/duration*100)) : 0;
+  $("progBar").style.width = pct+"%";
+  $("progPct").textContent = pct+"%";
+  $("progLabel").textContent = pct===0 ? "Not started" : (pct>=Math.round(C.requiredWatch*100) ? "Watched" : "Watching…");
+  if(!gateOpen && duration && watched >= need){
+    gateOpen = true;
+    if(poller) clearInterval(poller);
+    $("btnWatched").disabled = false;
+    $("watchNote").textContent = "Thanks — you can continue.";
+  }
+}
+
+/* ---------- quiz ----------------------------------------------------------- */
+function buildQuiz(){
+  if(!C.quiz || !C.quiz.length){ return false; }
+  $("quizSub").textContent = "You need "+C.passScore+" of "+C.quiz.length+" correct. You can retry if you miss.";
+  $("quizBody").innerHTML = C.quiz.map(function(item,qi){
+    return '<div class="q"><p class="qtext">'+(qi+1)+'. '+esc(item.q)+'</p>'+
+      item.options.map(function(opt,oi){
+        return '<label class="opt" data-q="'+qi+'" data-o="'+oi+'">'+
+               '<input type="radio" name="q'+qi+'" value="'+oi+'">'+
+               '<span>'+esc(opt)+'</span></label>';
+      }).join("")+'</div>';
+  }).join("");
+  $("quizBody").addEventListener("change", function(){
+    var answered = C.quiz.every(function(_,qi){
+      return document.querySelector('input[name="q'+qi+'"]:checked'); });
+    $("btnQuiz").disabled = !answered;
+  });
+  return true;
+}
+
+function gradeQuiz(){
+  var answers=[], score=0;
+  C.quiz.forEach(function(item,qi){
+    var sel=document.querySelector('input[name="q'+qi+'"]:checked');
+    var pick=sel?parseInt(sel.value,10):-1;
+    var ok=(pick===item.correct);
+    if(ok) score++;
+    answers.push({ q:item.q, picked:(pick>=0?item.options[pick]:null), correct:ok });
+    document.querySelectorAll('.opt[data-q="'+qi+'"]').forEach(function(el){
+      var oi=parseInt(el.dataset.o,10);
+      el.classList.remove("right","wrong");
+      if(oi===item.correct) el.classList.add("right");
+      else if(oi===pick) el.classList.add("wrong");
+    });
+  });
+  attempts++;
+  lastScore={ score:score, of:C.quiz.length, answers:answers, attempts:attempts };
+  return score;
+}
+
+/* ---------- flow ----------------------------------------------------------- */
+function goQuiz(){
+  setSteps(2);
+  hide("stepWatch");
+  if(buildQuiz()) show("stepQuiz");
+  else { lastScore={score:null,of:0,answers:[],attempts:0}; goSign(); }
+  window.scrollTo(0,0);
+}
+
+function goSign(){
+  setSteps(3);
+  hide("stepQuiz");
+  $("affirmText").textContent = C.affirmation;
+  $("sigHint").textContent = 'Type it as "'+person.name+'" to match your record.';
+  show("stepSign");
+  window.scrollTo(0,0);
+}
+
+function nameMatches(typed){
+  var norm=function(s){ return String(s||"").toLowerCase().replace(/[^a-z]/g,""); };
+  return norm(typed)===norm(person.name) && typed.trim().length>2;
+}
+
+function submit(){
+  $("btnSign").disabled=true;
+  $("btnSign").textContent="Submitting…";
+  $("signErr").innerHTML="";
+  apiPost({
+    action:"acknowledge",
+    token: token,
+    courseId: C.id,
+    courseTitle: C.title,
+    courseVersion: C.version,
+    videoRef: C.video.type==="youtube" ? ("youtube:"+C.video.id) : ("file:"+C.video.url),
+    watchedSeconds: Math.round(watched),
+    videoSeconds: Math.round(duration),
+    quizScore: lastScore ? lastScore.score : null,
+    quizOutOf: lastScore ? lastScore.of : 0,
+    quizPassed: !!(lastScore && lastScore.score !== null && lastScore.score >= C.passScore),
+    quizAttempts: lastScore ? lastScore.attempts : 0,
+    quizAnswers: lastScore ? lastScore.answers : [],
+    affirmation: C.affirmation,
+    signedName: $("sig").value.trim(),
+    clientTime: new Date().toISOString(),
+    userAgent: navigator.userAgent
+  }).then(function(res){
+    if(!res || !res.ok){ throw new Error((res&&res.error)||"unknown"); }
+    hide("stepSign");
+    setSteps(4);
+    $("confNum").textContent = res.confirmation;
+    $("rName").textContent   = person.name;
+    $("rCourse").textContent = C.title;
+    $("rWhen").textContent   = res.recordedAtLocal || new Date().toLocaleString();
+    $("rScore").textContent  = (lastScore && lastScore.score!==null)
+                               ? (lastScore.score+" of "+lastScore.of) : "No quiz";
+    show("stepDone");
+    window.scrollTo(0,0);
+  }).catch(function(err){
+    $("btnSign").disabled=false;
+    $("btnSign").textContent="Submit acknowledgment";
+    $("signErr").innerHTML='<div class="note err"><b>That didn\'t go through.</b> '+
+      'Check your signal and tap again. If it keeps failing, take a screenshot of this '+
+      'page and text it to your supervisor. ('+esc(err.message||err)+')</div>';
+  });
+}
+
+/* ---------- start up -------------------------------------------------------- */
+function beginCourse(){
+  $("courseTitle").textContent = C.title;
+  $("courseSub").textContent   = C.blurb || "";
+  $("courseNotice").innerHTML  = C.notice
+    ? '<div class="note warn" style="display:flex;gap:9px;align-items:flex-start">'+
+      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto;margin-top:1px">'+
+      '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>'+
+      '<line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'+
+      '<span>'+esc(C.notice)+'</span></div>'
+    : "";
+  $("hdrTitle").textContent    = "Safety Training";
+  document.title = C.title;
+  setSteps(1);
+  show("stepWatch");
+  if(C.video.type==="youtube"){
+    if(!C.video.id || C.video.id.indexOf("REPLACE")===0){
+      $("vph").textContent="No video has been set yet. (Set CONFIG.COURSE.video.id)";
+      return;
+    }
+    startYouTube();
+  } else {
+    if(!C.video.url){ $("vph").textContent="No video has been set yet. (Set CONFIG.COURSE.video.url)"; return; }
+    startFile();
+  }
+}
+
+function boot(){
+  var p = new URLSearchParams(location.search);
+  token = p.get("t") || "";
+
+  if(CONFIG.ENDPOINT.indexOf("PASTE_")===0){
+    return fatal("<b>Not set up yet.</b> The endpoint URL is still a placeholder. "+
+                 "Follow SETUP.md step 3 and paste the Apps Script web app URL into CONFIG.ENDPOINT.");
+  }
+  if(!token){
+    return fatal("<b>This link is incomplete.</b> Open the link that was texted to you — "+
+                 "it has your personal code on the end. Don't share it; it's yours.");
+  }
+
+  apiGet({ action:"whoami", token:token, courseId:C.id }).then(function(res){
+    $("boot").classList.add("hidden");
+    show("app");
+    if(!res || !res.ok){
+      return fatal("<b>We don't recognize this link.</b> It may have been retyped or cut off "+
+                   "by your text app. Ask the Safety Director to text it again.");
+    }
+    person = res.person;
+    $("whoName").textContent = person.name;
+    $("whoSub").textContent  = [person.employeeNumber, person.company].filter(Boolean).join(" · ");
+
+    if(res.completed){
+      $("aConf").textContent = res.completed.confirmation;
+      $("aWhen").textContent = res.completed.recordedAtLocal || res.completed.recordedAt;
+      show("stepAlready");
+      return;
+    }
+    beginCourse();
+  }).catch(function(){
+    $("boot").classList.add("hidden");
+    show("app");
+    fatal("<b>Can't reach the server.</b> Check your signal and refresh the page.");
+  });
+}
+
+/* buttons */
+document.addEventListener("DOMContentLoaded", function(){
+  $("btnWatched").addEventListener("click", goQuiz);
+
+  /* The quiz button does one of two jobs depending on where we are:
+     grade what's selected, or clear a failed attempt so they can retry. */
+  var quizMode = "grade";
+
+  $("btnQuiz").addEventListener("click", function(){
+    if(quizMode === "retry"){
+      quizMode = "grade";
+      $("quizResult").innerHTML = "";
+      document.querySelectorAll(".opt").forEach(function(el){ el.classList.remove("right","wrong"); });
+      document.querySelectorAll('#quizBody input[type=radio]').forEach(function(r){ r.checked = false; });
+      $("btnQuiz").textContent = "Submit answers";
+      $("btnQuiz").disabled = true;
+      window.scrollTo(0,0);
+      return;
+    }
+
+    var score = gradeQuiz();
+    $("btnQuiz").disabled = true;
+
+    if(score >= C.passScore){
+      $("quizResult").innerHTML = '<div class="note ok" style="margin-top:14px"><b>'+score+' of '+
+        C.quiz.length+' correct.</b> Nice work.</div>';
+      $("quizNote").textContent = "";
+      setTimeout(goSign, 900);
+    } else {
+      $("quizResult").innerHTML = '<div class="note warn" style="margin-top:14px"><b>'+score+' of '+
+        C.quiz.length+' correct.</b> You need '+C.passScore+'. The right answers are marked in green — '+
+        'read them over and try again.</div>';
+      quizMode = "retry";
+      $("btnQuiz").textContent = "Try again";
+      $("btnQuiz").disabled = false;
+    }
+  });
+
+  $("sig").addEventListener("input", function(){
+    $("btnSign").disabled = !nameMatches(this.value);
+  });
+  $("btnSign").addEventListener("click", submit);
+  $("btnRetake").addEventListener("click", function(){
+    hide("stepAlready"); beginCourse(); window.scrollTo(0,0);
+  });
+
+  boot();
+});
+})();
+</script>
+</body>
+</html>
