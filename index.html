@@ -246,7 +246,8 @@ var CONFIG = {
     requiredWatch: 0.95,
 
     /* THE QUIZ ---------------------------------------------------------------
-       PLACEHOLDERS — replace with real questions once you've watched the video.
+       These are the real questions, drawn from the SJC orientation. They are
+       NOT placeholders — an earlier version of this comment said they were.
        "correct" is the position of the right answer, counting from 0.
        Delete a question by deleting its { ... } block and its comma.
        Leave the list empty to skip the quiz entirely.                         */
@@ -287,14 +288,20 @@ var CONFIG = {
         ],
         correct: 3 },
 
+      /* Corrected 2026-09-16. The first option used to read "Move it yourself
+         if you know how — moving railcars is never permitted" and was keyed
+         correct, which told a man to do the thing the same sentence forbids.
+         Anyone who picked "get an SJC operator" — the right answer on site —
+         was marked wrong. See rescoreQuestion5() in Code.gs for the correction
+         applied to records taken before this date. */
       { q: "You're working within 10 feet of a railroad track and a railcar is in your way. What do you do?",
         options: [
-          "Move it yourself if you know how — moving railcars is never permitted",
+          "Move it yourself if you know how",
           "Move it, as long as somebody spots for you",
           "Chock the wheels and roll it clear by hand",
-          "Get a Stella-Jones operator to move it for you"
+          "Ask a Stella-Jones operator to move it"
         ],
-        correct: 0 },
+        correct: 3 },
 
       { q: "What happens to a man who violates a Cardinal Rule — the LOTO or Hot Work programs?",
         options: [
