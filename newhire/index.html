@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F15A22">
+<title>Hoke Industrial — New Hire Paperwork</title>
+<meta name="apple-mobile-web-app-title" content="Hoke Paperwork">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="robots" content="noindex,nofollow">
+<style>
+
+  :root{
+    --orange:#F15A22; --orange-dark:#C2461A; --orange-light:#FCE3D8;
+    --black:#1A1A1A; --silver-dark:#7A7A7A; --silver:#C0C0C0; --silver-light:#F2F2F2;
+    --page:#eef1f7; --card:#ffffff; --line:#d7dbe2;
+    --ok-bg:#e6f6ee; --ok-fg:#0f6e56; --ok-bd:#b7e3cf;
+    --vf-bg:#fef3e2; --vf-fg:#92590a; --vf-bd:#f5d9a8;
+    --err-bg:#fdecec; --err-fg:#a12626; --err-bd:#f3c4c4;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--page);color:var(--black);-webkit-text-size-adjust:100%}
+  header{background:#fff;border-bottom:1px solid var(--silver);position:sticky;top:0;z-index:20;box-shadow:0 1px 3px rgba(26,26,26,.08)}
+  .wrap{max-width:720px;margin:0 auto;padding:12px 16px}
+  .brandrow{display:flex;align-items:center;gap:14px}
+  .logo{height:40px;width:auto;max-width:240px;object-fit:contain;display:block}
+  .logo.missing{display:none}
+  .titlebox{line-height:1.3;min-width:0}
+  .apptitle{font-size:15px;font-weight:600;margin:0;display:flex;align-items:center;gap:6px}
+  .loc{font-size:12px;color:var(--silver-dark);margin:1px 0 0}
+  main{max-width:720px;margin:0 auto;padding:16px 16px 90px}
+
+  .steps{display:flex;gap:6px;margin:0 0 16px}
+  .step{flex:1;height:4px;border-radius:2px;background:var(--silver)}
+  .step.done{background:var(--orange)}
+  .step.active{background:var(--orange-dark)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(26,26,26,.05)}
+  .card h2{font-size:17px;margin:0 0 4px}
+  .card p.sub{font-size:13.5px;color:var(--silver-dark);margin:0 0 14px;line-height:1.5}
+
+  .who{display:flex;align-items:center;gap:12px;background:var(--orange-light);border:1px solid rgba(241,90,34,.3);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+  .who .nm{font-weight:700;font-size:15px;color:var(--orange-dark)}
+  .who .sm{font-size:12.5px;color:var(--orange-dark);opacity:.85}
+
+  .videobox{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;margin-bottom:12px}
+  .videobox iframe,.videobox video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+  .vplaceholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#bbb;font-size:13px;text-align:center;padding:20px}
+
+  .prog{height:8px;background:var(--silver-light);border-radius:4px;overflow:hidden;margin:10px 0 6px}
+  .prog span{display:block;height:100%;width:0;background:var(--orange);transition:width .3s}
+  .progtext{font-size:12.5px;color:var(--silver-dark);display:flex;justify-content:space-between;gap:10px}
+
+  .btn{display:block;width:100%;padding:14px 16px;font-size:16px;font-weight:700;border-radius:10px;border:none;
+       background:var(--orange);color:#fff;cursor:pointer;transition:background .15s,opacity .15s;font-family:inherit}
+  .btn:hover:not(:disabled){background:var(--orange-dark)}
+  .btn:disabled{background:var(--silver);color:#fff;cursor:not-allowed}
+  .btn.ghost{background:#fff;color:var(--orange);border:1px solid var(--orange)}
+  .btn.ghost:hover:not(:disabled){background:var(--orange-light)}
+  .btnnote{font-size:12.5px;color:var(--silver-dark);text-align:center;margin-top:8px;line-height:1.45}
+
+  .q{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+  .q:first-of-type{border-top:none;padding-top:0;margin-top:0}
+  .qtext{font-weight:600;font-size:15px;margin:0 0 10px;line-height:1.4}
+  .opt{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;
+       margin-bottom:8px;cursor:pointer;font-size:14.5px;line-height:1.4;background:#fff;transition:border-color .12s,background .12s}
+  .opt:hover{border-color:var(--orange)}
+  .opt input{margin:2px 0 0;flex:0 0 auto;accent-color:var(--orange);width:18px;height:18px}
+  .opt.right{border-color:var(--ok-bd);background:var(--ok-bg)}
+  .opt.wrong{border-color:var(--err-bd);background:var(--err-bg)}
+
+  .affirm{background:var(--silver-light);border:1px solid var(--line);border-radius:9px;padding:13px 14px;font-size:13.5px;line-height:1.55;margin-bottom:14px}
+  label.fld{display:block;font-size:13px;font-weight:600;margin:0 0 6px}
+  input[type=text]{width:100%;padding:12px 13px;font-size:16px;border:1px solid var(--silver);border-radius:8px;
+                   font-family:inherit;color:var(--black);background:#fff;outline:none}
+  input[type=text]:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(241,90,34,.18)}
+
+  .note{border-radius:9px;padding:12px 14px;font-size:13.5px;line-height:1.5;margin-bottom:14px;border:1px solid}
+  .note.ok{background:var(--ok-bg);color:var(--ok-fg);border-color:var(--ok-bd)}
+  .note.warn{background:var(--vf-bg);color:var(--vf-fg);border-color:var(--vf-bd)}
+  .note.err{background:var(--err-bg);color:var(--err-fg);border-color:var(--err-bd)}
+
+  .receipt{text-align:center;padding:8px 0 4px}
+  .receipt .chk{width:58px;height:58px;margin:0 auto 12px;border-radius:50%;background:var(--ok-bg);
+                display:flex;align-items:center;justify-content:center;border:2px solid var(--ok-bd)}
+  .receipt h2{font-size:20px;margin:0 0 6px}
+  .receipt .conf{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:19px;font-weight:700;
+                 color:var(--orange-dark);background:var(--orange-light);border:1px solid rgba(241,90,34,.3);
+                 border-radius:8px;padding:10px 14px;display:inline-block;margin:6px 0 12px;letter-spacing:.5px}
+  .receipt dl{text-align:left;font-size:13.5px;margin:14px 0 0;border-top:1px solid var(--line);padding-top:12px}
+  .receipt dl div{display:flex;justify-content:space-between;gap:14px;padding:5px 0}
+  .receipt dt{color:var(--silver-dark)}
+  .receipt dd{margin:0;font-weight:600;text-align:right}
+
+  .hidden{display:none!important}
+  footer{max-width:720px;margin:0 auto;padding:6px 16px 40px;color:var(--silver-dark);font-size:11.5px;text-align:center;line-height:1.5}
+  .spin{width:34px;height:34px;border:3px solid var(--silver-light);border-top-color:var(--orange);border-radius:50%;
+        margin:26px auto;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  /* ---- new-hire form additions to the shared training stylesheet ---- */
+
+  .grp{margin-bottom:20px}
+  .grp > h3{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--silver-dark);
+            margin:0 0 10px;font-weight:700}
+  .row{display:flex;flex-wrap:wrap;gap:0 10px}
+  .fld{flex:1 1 100%;margin-bottom:12px;min-width:0}
+  .fld.half{flex:1 1 calc(50% - 5px)}
+  .fld.quarter{flex:1 1 calc(33% - 7px)}
+  .fld label{display:block;font-size:13px;font-weight:600;margin:0 0 5px}
+  .fld .opt-tag{font-weight:400;color:var(--silver-dark)}
+  .fld input, .fld textarea{
+    width:100%;padding:12px 13px;font-size:16px;border:1px solid var(--silver);border-radius:8px;
+    font-family:inherit;color:var(--black);background:#fff;outline:none;-webkit-appearance:none}
+  .fld input:focus, .fld textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(241,90,34,.18)}
+  .fld input.bad, .fld textarea.bad{border-color:var(--err-bd);background:var(--err-bg)}
+  .fld .err{font-size:12px;color:var(--err-fg);margin:4px 0 0;display:none}
+  .fld.showerr .err{display:block}
+  .fld textarea{min-height:88px;resize:vertical;line-height:1.45}
+
+  /* A policy: scroll box + its own acknowledgment. */
+  .pol{border:1px solid var(--line);border-radius:10px;margin-bottom:14px;overflow:hidden;background:#fff}
+  .pol > header{padding:12px 14px;background:var(--silver-light);border-bottom:1px solid var(--line);
+                position:static;box-shadow:none}
+  .pol h3{font-size:15px;margin:0}
+  .pol .short{font-size:12.5px;color:var(--silver-dark);margin:2px 0 0}
+  .polbody{max-height:300px;overflow-y:auto;padding:14px;font-size:14px;line-height:1.55;
+           -webkit-overflow-scrolling:touch}
+  .polbody h4{font-size:14px;margin:16px 0 6px;color:var(--orange-dark)}
+  .polbody h4:first-child{margin-top:0}
+  .polbody p{margin:0 0 10px}
+  .polbody .end{height:1px}
+  .polfoot{border-top:1px solid var(--line);padding:12px 14px;background:#fff}
+  .ack{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.45;cursor:pointer}
+  .ack input{margin:2px 0 0;flex:0 0 auto;accent-color:var(--orange);width:20px;height:20px}
+  .ack.locked{color:var(--silver-dark);cursor:default}
+  .ack.locked input{cursor:not-allowed}
+  .scrollhint{font-size:12.5px;color:var(--vf-fg);background:var(--vf-bg);border:1px solid var(--vf-bd);
+              border-radius:7px;padding:8px 10px;margin:0 0 10px}
+  .pol.read .scrollhint{display:none}
+
+  .review{font-size:14px;line-height:1.5}
+  .review div{display:flex;justify-content:space-between;gap:14px;padding:6px 0;border-top:1px solid var(--line)}
+  .review div:first-child{border-top:none}
+  .review dt{color:var(--silver-dark);flex:0 0 auto}
+  .review dd{margin:0;font-weight:600;text-align:right;word-break:break-word}
+
+  .backlink{display:inline-block;background:none;border:none;color:var(--orange);font:inherit;
+            font-size:14px;padding:10px 0;cursor:pointer;text-decoration:underline}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brandrow">
+      <img class="logo" id="logo" src="data:image/png;base64,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" alt="Hoke Industrial LLC">
+      <div class="titlebox">
+        <p class="apptitle"><span id="hdrTitle">New Hire Paperwork</span></p>
+        <p class="loc">Hoke Industrial LLC · Lufkin, TX</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="boot"><div class="spin"></div></div>
+
+  <div id="app" class="hidden">
+    <div class="steps" aria-hidden="true">
+      <div class="step" id="s1"></div><div class="step" id="s2"></div>
+      <div class="step" id="s3"></div><div class="step" id="s4"></div>
+    </div>
+
+    <!-- 1. about you -->
+    <section class="card hidden" id="stepYou">
+      <h2 id="packTitle">Your information</h2>
+      <p class="sub" id="packBlurb"></p>
+      <div id="youFields"></div>
+      <button class="btn" id="btnYou">Next</button>
+      <p class="btnnote">Nothing is sent until you sign at the end.</p>
+    </section>
+
+    <!-- 2. emergency contacts -->
+    <section class="card hidden" id="stepEc">
+      <h2>Emergency contacts</h2>
+      <p class="sub">Who do we call if something happens to you on the job?</p>
+      <div id="ecFields"></div>
+      <div class="grp">
+        <h3>Medical information <span class="opt-tag" style="text-transform:none;letter-spacing:0">— optional</span></h3>
+        <div class="fld">
+          <label for="medical" id="medLabel"></label>
+          <textarea id="medical" rows="3" placeholder="Leave blank if there is nothing"></textarea>
+          <p class="btnnote" style="text-align:left;margin:6px 0 0">
+            This is kept in a confidential medical file, separate from the rest of your
+            paperwork, and is only used if you need help.
+          </p>
+        </div>
+      </div>
+      <button class="btn" id="btnEc">Next</button>
+      <button class="backlink" id="backEc">← Back</button>
+    </section>
+
+    <!-- 3. policies -->
+    <section class="card hidden" id="stepPol">
+      <h2>What you are agreeing to</h2>
+      <p class="sub">Read each one to the end, then tick the box. The box stays locked until you
+        have scrolled through it.</p>
+      <div id="polList"></div>
+      <button class="btn" id="btnPol" disabled>Next</button>
+      <button class="backlink" id="backPol">← Back</button>
+    </section>
+
+    <!-- 4. sign -->
+    <section class="card hidden" id="stepSign">
+      <h2>Sign and send</h2>
+      <p class="sub">Check it over, then type your name exactly as you entered it at the top.</p>
+      <div class="review" id="review"></div>
+      <div class="affirm" id="affirmText" style="margin-top:16px"></div>
+      <div class="fld" style="margin-bottom:6px">
+        <label class="fld" for="sig">Type your full name to sign</label>
+        <input type="text" id="sig" autocomplete="name" autocapitalize="words" spellcheck="false"
+               placeholder="Your full name">
+      </div>
+      <p class="btnnote" style="text-align:left;margin:0 0 14px" id="sigHint"></p>
+      <div id="signErr"></div>
+      <button class="btn" id="btnSign" disabled>Send my paperwork</button>
+      <button class="backlink" id="backSign">← Back</button>
+    </section>
+
+    <!-- done -->
+    <section class="card hidden" id="stepDone">
+      <div class="receipt">
+        <div class="chk">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0f6e56"
+               stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6 9 17l-5-5"/>
+          </svg>
+        </div>
+        <h2>That's done.</h2>
+        <p class="sub" style="margin-bottom:0">Your paperwork is in. Keep this number in case
+          anybody asks.</p>
+        <div class="conf" id="confNum">—</div>
+        <dl>
+          <div><dt>Name</dt><dd id="rName">—</dd></div>
+          <div><dt>Received</dt><dd id="rWhen">—</dd></div>
+        </dl>
+        <div class="note warn" style="margin-top:18px;text-align:left">
+          <b>Still to do on paper.</b> Your direct deposit form and your W-9 are not part of
+          this. Bring a voided check or your bank's routing and account number, and do those
+          two pages when you come in.
+        </div>
+      </div>
+    </section>
+
+    <!-- already used -->
+    <section class="card hidden" id="stepAlready">
+      <h2>This one is already in.</h2>
+      <p class="sub">Your paperwork came through on this link already. There is nothing else to do
+        here — if something needs changing, tell the man who sent you the link.</p>
+      <div style="border-top:1px solid var(--line);padding-top:10px">
+        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13.5px">
+          <span style="color:var(--silver-dark)">Confirmation</span><b id="aConf">—</b></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13.5px">
+          <span style="color:var(--silver-dark)">Received</span><b id="aWhen">—</b></div>
+      </div>
+    </section>
+
+    <div id="fatal"></div>
+  </div>
+</main>
+
+<footer>
+  Hoke Industrial LLC · Lufkin, TX<br>
+  <span id="verline"></span>
+</footer>
+
+<script>
+var CONFIG = {
+  "ENDPOINT": "https://script.google.com/macros/s/AKfycbzfokzxjbXqVy5uYs3PecaCKc3qVJZzH0LNbfmI6CoKgKO6ttlGUfL9d9HAsPzR6ssf8w/exec",
+  "PACKET": {
+    "id": "contractor",
+    "title": "Hoke Industrial — New Hire Paperwork",
+    "subtitle": "1099 Contractor",
+    "version": "2026-10",
+    "blurb": "Fill this in on your phone before your first day. It takes about ten minutes. Your direct deposit form and W-9 are separate — you do those on paper when you come in."
+  },
+  "AFFIRMATION": "The information I have given on this form is true and correct to the best of my knowledge. I have read each of the policies above and I agree to them. I understand that typing my name below is my signature, and that this record is kept by Hoke Industrial LLC exactly as if I had signed it on paper.",
+  "MEDICAL_PROMPT": "Anything a paramedic or the man next to you should know in an emergency? Diabetic, high blood pressure, asthma, a bad allergy, a medication that matters. Leave it blank if there is nothing.",
+  "FIELDS": [
+    {
+      "g": "You",
+      "fields": [
+        {
+          "k": "name",
+          "l": "Your full name",
+          "req": true,
+          "ac": "name",
+          "cap": "words"
+        },
+        {
+          "k": "address",
+          "l": "Street address",
+          "req": true,
+          "ac": "street-address"
+        },
+        {
+          "k": "city",
+          "l": "City",
+          "req": true,
+          "ac": "address-level2",
+          "col": "half"
+        },
+        {
+          "k": "state",
+          "l": "State",
+          "req": true,
+          "ac": "address-level1",
+          "col": "quarter",
+          "cap": "characters",
+          "max": 2
+        },
+        {
+          "k": "zip",
+          "l": "ZIP",
+          "req": true,
+          "ac": "postal-code",
+          "col": "quarter",
+          "mode": "numeric",
+          "max": 10
+        },
+        {
+          "k": "cell",
+          "l": "Cell phone",
+          "req": true,
+          "ac": "tel",
+          "type": "tel",
+          "col": "half"
+        },
+        {
+          "k": "alt",
+          "l": "Other phone",
+          "req": false,
+          "ac": "tel",
+          "type": "tel",
+          "col": "half"
+        },
+        {
+          "k": "email",
+          "l": "Email",
+          "req": false,
+          "ac": "email",
+          "type": "email"
+        }
+      ]
+    },
+    {
+      "g": "Who we call in an emergency",
+      "fields": [
+        {
+          "k": "ec1Name",
+          "l": "Name",
+          "req": true,
+          "ac": "off",
+          "cap": "words"
+        },
+        {
+          "k": "ec1Rel",
+          "l": "Relationship",
+          "req": true,
+          "ac": "off",
+          "col": "half",
+          "ph": "Wife, brother, mother…"
+        },
+        {
+          "k": "ec1Phone",
+          "l": "Phone",
+          "req": true,
+          "ac": "off",
+          "type": "tel",
+          "col": "half"
+        }
+      ]
+    },
+    {
+      "g": "Second emergency contact (if you have one)",
+      "fields": [
+        {
+          "k": "ec2Name",
+          "l": "Name",
+          "req": false,
+          "ac": "off",
+          "cap": "words"
+        },
+        {
+          "k": "ec2Rel",
+          "l": "Relationship",
+          "req": false,
+          "ac": "off",
+          "col": "half"
+        },
+        {
+          "k": "ec2Phone",
+          "l": "Phone",
+          "req": false,
+          "ac": "off",
+          "type": "tel",
+          "col": "half"
+        }
+      ]
+    }
+  ],
+  "POLICIES": [
+    {
+      "id": "statement-of-notification",
+      "title": "Statement of Notification",
+      "short": "Vehicle, equipment and unemployment",
+      "affirmation": "I have read the Statement of Notification. I understand that my vehicle and my personal equipment are not covered by Hoke Industrial’s insurance, that I am responsible for repairs to my own vehicle and to any vehicle I damage on a Hoke Industrial site, and that as a 1099 contractor I am not eligible for unemployment benefits.",
+      "blocks": [
+        "I understand that my vehicle, and my personal equipment, is not covered by Hoke Industrial’s insurance, and that if my vehicle is damaged while on any Hoke Industrial job site, I am solely responsible for all repairs. If I cause damage to another contractor’s or employee’s vehicle while on Hoke Industrial’s site, I am responsible for all repairs.",
+        "I am also fully aware that, as a 1099 contractor, I am NOT eligible for any unemployment benefits, and will not be able to file for unemployment benefits as I am a self-employed contractor."
+      ]
+    },
+    {
+      "id": "return-to-work",
+      "title": "Return to Work Policy",
+      "short": "What happens after an injury",
+      "affirmation": "I have read and understand Hoke Industrial’s Return to Work Policy, including the restricted / light duty provisions and the requirement that I have a medical release from a licensed health care professional before I return to work after an injury or illness.",
+      "blocks": [
+        "# Return to Work Policy Statement",
+        "In the event of an occupational injury or illness, the priority is to ensure our employees are presented to a healthcare provider promptly so that the healing process may begin.",
+        "# Restricted Work – Light Duty Work",
+        "If the healing process of the employee who has suffered an occupational injury or illness is such that he/she is not capable of performing his/her regularly assigned duties, but may perform restricted or light duty work, every effort will be made to allow this to take place.",
+        "# Specific procedures:",
+        "The physician or healthcare facility case manager will be provided a detailed description of the employee’s assigned duties including the physical demands of the job as well as the environmental conditions such as heat, cold, atmospheres that require respiratory wear, etc., so that the physician or case manager may make reasonable recommendations as to what duties the employee may or may not perform consistent with his/her medical condition.",
+        "Technically, an employee’s assigned duties (which will be provided to the physician or case manager) are defined as “the duties he or she would have performed at least once per week before the injury or illness.” If work is available that meets the criteria of the physician or case manager, the employee will be permitted to perform that work.",
+        "If the physician or case manager approves restricted work and no such work is available, no work will be provided.",
+        "Our policy is consistent with Part 1904, Recording and Reporting Occupational Injuries and Illnesses.",
+        "The downside to this policy is that the employee may not be able to return to work sooner.",
+        "The upside to this policy is that if an employee does return to work, he/she will know that his/her services are required.",
+        "It should be noted that if the work restriction is limited to the day of the injury or illness, and none of the other recording criteria are met, the case is not recordable on the OSHA 300 Log. The time away from work starts the day after the injury or illness.",
+        "In all cases, an employee returning to work after an occupational injury or illness must have a medical release from a licensed health care professional or health care facility case manager indicating that the employee may:",
+        "Resume normal work with no restrictions Resume work with listed restrictions In the event of a non-occupational injury or illness, essentially the same procedures apply.",
+        "The employee should tell their physician or healthcare professional the type of work he/she performs so a judgment can be made as to the advisability of returning to work.",
+        "In all cases, an employee returning to work after a non-occupational injury or illness must have a note from his physician or licensed health care professional indicating that the employee may:",
+        "Resume normal work with no restrictions Resume work with listed restrictions If the physician or licensed health care professional approves restricted work and no such work is available, no work will be provided.",
+        "This Policy Statement will be conspicuously posted."
+      ]
+    },
+    {
+      "id": "drug-free",
+      "title": "Drug-Free Workplace Policy",
+      "short": "Testing, enforcement and consequences",
+      "affirmation": "I have read and understand Hoke Industrial’s Drug-Free Workplace Policy. I understand when testing is administered — on application, for fitness for duty, on reasonable suspicion, and at random — and I understand the consequences of a confirmed positive result or a refusal to cooperate.",
+      "blocks": [
+        "# Drug Free Workplace Policy:",
+        "The type of work we perform can result in serious injury if employees cannot focus on their job tasks, as well as their surroundings and others with whom they work. It’s the policy of Hoke Industrial LLC to hire only persons free from any evidence of illegal use of controlled substances or other drugs, including alcohol.",
+        "The involvement in the illegal manufacture, distribution, dispensing, possession, or use of a controlled substance or other drug on company property or while performing company business will result in termination of employment.",
+        "While the Drug-Free Workplace Act of 1988 does not apply to all employers, it does apply to employers who have received a federal contract worth $100,000.00 or more. Essentially, every state has some sort of incentive to have a drug-free workplace, i.e., reduced worker compensation rates. We will comply with our state drug testing laws.",
+        "All supervisors will receive a minimum of 2 hours of training in substance abuse detection.",
+        "# Drug Testing:",
+        "Drug testing will be performed by certified laboratories, and all results will be confidential.",
+        "Any analysis of specimens utilized to evaluate whether evidence of illegal controlled substances or other drug use exists will be confidential.",
+        "All initial drug tests will be paid for by our company.",
+        "Failure to pass an initial drug test will not be considered conclusive evidence of drug misuse. A second test will be administered to ensure that a false reading has not occurred.",
+        "Further, all positive tests will be reviewed by a Medical Review Officer, and the employee may consult with this officer before the results are provided to us.",
+        "The following ten classes of drugs will be tested for:",
+        "a. Amphetamines",
+        "b. Cocaine Metabolites",
+        "c. Marijuana Metabolites (THC)",
+        "d. Opiates",
+        "e. Phencyclidine (PCP)",
+        "f. Barbiturates",
+        "g. Benzodiazepines",
+        "h. Methadone",
+        "i. Methaqualone",
+        "j. Propoxyphene",
+        "# When Tests Are Administered:",
+        "# Job Application:",
+        "All applicants for full or part-time employment must submit to a “job applicant” drug test.",
+        "Refusal to participate in the drug test in the manner required, or a positive confirmed drug test result indicating the illegal use of a controlled substance or other drug, will be a basis for rejecting the applicant.",
+        "# Fitness for Duty:",
+        "Consistent with applicable law or regulations, an employee must submit to a drug test conducted as part of a routinely scheduled employee fitness-for-duty medical examination.",
+        "Additionally, this test will be given if there is a concern that an employee is incapable of performing his or her assigned duties.",
+        "# Reasonable Suspicion:",
+        "An employee must submit to drug testing when there is a belief drawn from specific objective and articulable facts and reasonable inferences that the employee is illegally using or has illegally used a controlled substance or other drugs. This will only be required upon the recommendation of a supervisor who has had training in this type of detection.",
+        "# Random or periodic:",
+        "Conducted, as permitted by statute or regulation. These tests will be without cause, suspicion, detectable performance problems, or the occurrence of an accident, incident or safety violation.",
+        "# Note:",
+        "OSHA has determined that drug testing after injuries or illnesses that occur at the workplace can be considered retaliatory or discriminatory & thus discourages employees from properly reporting the injury or illness. This can be the case in situations where the injury or illness wouldn’t have been reasonably expected to be the result of impairment.",
+        "# Example:",
+        "A bee sting that results in an allergic reaction and leads to a stay at the hospital. There is no reasonable belief that a bee sting would be caused by impairment and thus drug testing would be considered retaliatory or discriminatory.",
+        "# Laboratory Testing:",
+        "The selected laboratory will perform substance testing on blood or urine specimens in accordance with standards set forth by the National Institute for Drug Abuse. Employees may be asked by collection site personnel to indicate whether there is potential that they will test positive for prescription or other substances. A consent form and information sheet will be provided.",
+        "If the employee fails to provide an acceptable urine specimen, one of the following steps will be taken:",
+        "1. The employee’s stay will be extended at the designated collection site, if feasible, until an acceptable specimen can be collected.",
+        "2. The test may be rescheduled due to unusual circumstances, i.e., post-operative situations.",
+        "3. The employee will be disciplined up to and including termination on the first offense for failing to cooperate or refusing to provide an acceptable specimen.",
+        "All positive urine specimen test results for employees on active status will be confirmed by standard laboratory procedures, generally gas chromatography/mass spectrometry (GC/MS), using a portion of the same specimen.",
+        "# Non-Lab Testing:",
+        "A visual one-step panel immunoassay for the simultaneous, qualitative detection of multiple drugs and metabolites in human urine may be used for the purpose of administering Random, post-accident, and for-cause drug screens in the field.",
+        "1. In the event of a positive reading, the specimen will be sealed, a chain of custody form will be completed, and it will be sent to a NIDA-certified lab for GC/MS analysis.",
+        "2. If the additional test results are positive, or if the employee fails or refuses to execute the Chain of Custody forms as directed, termination will result.",
+        "3. If the additional drug screen results are negative, the employee will be returned to work and compensated for time lost from the job.",
+        "# Enforcement:",
+        "No search, inspection, or drug test will be conducted without written consent. However, any employee who refuses to provide such written consent and fully cooperates with our policies will be subject to disciplinary action up to and including discharge from employment.",
+        "Under certain circumstances, disciplinary action may include a mandatory referral to and enrollment in an approved rehabilitation program at the employee’s expense. This action may also require an indefinite suspension of regular employment.",
+        "An employee’s job is not in jeopardy by reason of his voluntary admission to having a substance problem and request for help and referral to an approved rehabilitation program, provided there has been no prior violation of this policy, and the employee has not previously been through rehabilitation while employed with the company, and provided that such request is made before, and well in advance of, any consideration of being tested under the provisions of this policy.",
+        "The cost of this rehabilitation will be at the employee’s expense. The employee will be placed on one-time administrative leave, without pay, for no longer than 30 calendar days.",
+        "Employees participating in this rehabilitation program will be subject to follow-up or “maintenance” testing for a 5-year period.",
+        "If the result of a “random,” “for cause,” “post-accident” or “maintenance” drug screening is positive, the employee will be terminated from employment, and he may not then request rehabilitation. No terminated employee can be reconsidered for reemployment sooner than six (6) months following termination. Any terminated employee who is subsequently rehired and later fails another drug screen will no longer be eligible to be reconsidered for employment under any circumstances.",
+        "# Client Requirement:",
+        "In the event that our client has more stringent Drug Testing Guidelines, we will follow their guidelines when working for them.",
+        "# Training:",
+        "Training will be provided to all employees using the hyperlinked reference materials below:",
+        "Making Your Workplace Drug-Free: A Kit for Employers"
+      ]
+    }
+  ]
+};
+
+/* ======================================================================== */
+
+var $ = function (id) { return document.getElementById(id); };
+var show = function (id) { $(id).classList.remove("hidden"); };
+var hide = function (id) { $(id).classList.add("hidden"); };
+var esc = function (s) {
+  return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+  });
+};
+
+var P = CONFIG.PACKET;
+var code = null;                 // the one-time link code
+var data = {};                   // what he has typed
+var agreed = {};                 // policy id -> true
+var readTo = {};                 // policy id -> scrolled to the end
+
+/* ---------- fatal --------------------------------------------------------- */
+function fatal(html) {
+  hide("boot");
+  show("app");
+  ["stepYou", "stepEc", "stepPol", "stepSign", "stepDone", "stepAlready"].forEach(hide);
+  document.querySelector(".steps").style.display = "none";
+  $("fatal").innerHTML = '<div class="note err">' + html + "</div>";
+}
+
+/* ---------- backend ------------------------------------------------------- */
+/* text/plain on purpose: it keeps the browser from firing a CORS preflight,
+   which Apps Script web apps do not answer. The body is still JSON. */
+function apiPost(payload) {
+  return fetch(CONFIG.ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  }).then(function (r) { return r.json(); });
+}
+
+/* ---------- steps --------------------------------------------------------- */
+var STEP_IDS = ["stepYou", "stepEc", "stepPol", "stepSign"];
+function setStep(n) {            // 1-based; 5 = done
+  for (var i = 1; i <= 4; i++) {
+    var el = $("s" + i);
+    el.className = "step" + (i < n ? " done" : i === n ? " active" : "");
+  }
+}
+function goStep(n) {
+  STEP_IDS.forEach(hide);
+  hide("stepDone"); hide("stepAlready");
+  if (n <= 4) { show(STEP_IDS[n - 1]); setStep(n); }
+  window.scrollTo(0, 0);
+}
+
+/* ---------- fields -------------------------------------------------------- */
+function fieldHtml(f) {
+  var attrs = [
+    'id="f_' + f.k + '"',
+    'type="' + (f.type || "text") + '"',
+    'autocomplete="' + (f.ac || "off") + '"',
+    f.cap ? 'autocapitalize="' + f.cap + '"' : 'autocapitalize="sentences"',
+    f.max ? 'maxlength="' + f.max + '"' : "",
+    f.mode ? 'inputmode="' + f.mode + '"' : "",
+    f.ph ? 'placeholder="' + esc(f.ph) + '"' : "",
+    'spellcheck="false"'
+  ].filter(Boolean).join(" ");
+  return '<div class="fld ' + (f.col || "") + '" id="w_' + f.k + '">' +
+    '<label for="f_' + f.k + '">' + esc(f.l) +
+      (f.req ? "" : ' <span class="opt-tag">(optional)</span>') + "</label>" +
+    "<input " + attrs + ">" +
+    '<p class="err" id="e_' + f.k + '"></p>' +
+    "</div>";
+}
+function groupHtml(g, withHeading) {
+  return '<div class="grp">' +
+    (withHeading ? "<h3>" + esc(g.g) + "</h3>" : "") +
+    '<div class="row">' + g.fields.map(fieldHtml).join("") + "</div></div>";
+}
+
+/* ---------- validation ---------------------------------------------------- */
+var DIGITS = function (s) { return String(s || "").replace(/\D/g, ""); };
+
+/* The field is maxlength-2, so a man who types "Texas" silently gets "Te".
+   Checking the length alone would wave that through, so the actual list is the
+   check — an emergency contact card with a made-up state on it is worth less
+   than one with none. */
+var STATES = ("AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO " +
+  "MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC PR VI GU AS MP")
+  .split(" ");
+
+function fieldError(f, v) {
+  v = (v || "").trim();
+  if (!v) return f.req ? "Needed." : "";
+  if (f.type === "tel") {
+    var d = DIGITS(v);
+    // 10 digits, or 11 starting with a 1. Anything else is a typo, not a
+    // number anybody can call in an emergency.
+    if (!(d.length === 10 || (d.length === 11 && d.charAt(0) === "1"))) {
+      return "That doesn't look like a 10-digit number.";
+    }
+  }
+  if (f.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) {
+    return "Check the email address.";
+  }
+  if (f.k === "zip" && !/^\d{5}(-\d{4})?$/.test(v)) return "Five digits.";
+  if (f.k === "state" && STATES.indexOf(v.toUpperCase()) === -1) {
+    return "Two-letter state, like TX.";
+  }
+  if (f.k === "name" && v.replace(/[^A-Za-z]/g, "").length < 3) return "Your full name, please.";
+  return "";
+}
+
+function readGroup(groups) {
+  var ok = true;
+  groups.forEach(function (g) {
+    g.fields.forEach(function (f) {
+      var el = $("f_" + f.k);
+      var v = el.value.trim();
+      data[f.k] = v;
+      var msg = fieldError(f, v);
+      $("w_" + f.k).classList.toggle("showerr", !!msg);
+      el.classList.toggle("bad", !!msg);
+      $("e_" + f.k).textContent = msg;
+      if (msg) ok = false;
+    });
+  });
+  return ok;
+}
+
+function fmtPhone(s) {
+  var d = DIGITS(s);
+  if (d.length === 11 && d.charAt(0) === "1") d = d.slice(1);
+  return d.length === 10 ? "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6) : s;
+}
+
+/* ---------- policies ------------------------------------------------------ */
+var checkers = [];               // one per policy; run when step 3 opens
+
+function policyHtml(p) {
+  var body = p.blocks.map(function (b) {
+    return b.indexOf("# ") === 0
+      ? "<h4>" + esc(b.slice(2)) + "</h4>"
+      : "<p>" + esc(b) + "</p>";
+  }).join("");
+  return '<div class="pol" id="pol_' + p.id + '">' +
+    "<header><h3>" + esc(p.title) + '</h3><p class="short">' + esc(p.short) + "</p></header>" +
+    '<div class="polbody" id="body_' + p.id + '">' + body +
+      '<div class="end" id="end_' + p.id + '"></div></div>' +
+    '<div class="polfoot">' +
+      '<p class="scrollhint" id="hint_' + p.id + '">Scroll to the end of this one to unlock the box.</p>' +
+      '<label class="ack locked" id="lab_' + p.id + '">' +
+        '<input type="checkbox" id="ack_' + p.id + '" disabled>' +
+        "<span>" + esc(p.affirmation) + "</span>" +
+      "</label>" +
+    "</div></div>";
+}
+
+function wirePolicy(p) {
+  var body = $("body_" + p.id);
+  var box = $("pol_" + p.id);
+  var cb = $("ack_" + p.id);
+  var lab = $("lab_" + p.id);
+
+  function unlock() {
+    if (readTo[p.id]) return;
+    readTo[p.id] = true;
+    box.classList.add("read");
+    cb.disabled = false;
+    lab.classList.remove("locked");
+  }
+  // Scrolled to the end — or short enough that there is nothing to scroll.
+  //
+  // The clientHeight guard is load-bearing, not defensive. The policies are
+  // rendered while step 3 is still hidden, and a hidden box measures 0/0/0,
+  // which satisfies "scrolled to the end" and would unlock every box before
+  // anybody had read a word. So a box that has not been laid out yet is not
+  // judged at all; the step re-checks them when it opens.
+  function check() {
+    if (!body.clientHeight) return;
+    if (body.scrollHeight - body.scrollTop - body.clientHeight < 24) unlock();
+  }
+  body.addEventListener("scroll", check, { passive: true });
+  checkers.push(check);
+
+  cb.addEventListener("change", function () {
+    agreed[p.id] = cb.checked;
+    refreshPolBtn();
+  });
+}
+
+function refreshPolBtn() {
+  var all = CONFIG.POLICIES.every(function (p) { return agreed[p.id]; });
+  $("btnPol").disabled = !all;
+}
+
+/* ---------- review + signature ------------------------------------------- */
+function buildReview() {
+  var rows = [
+    ["Name", data.name],
+    ["Address", [data.address, data.city, (data.state || "").toUpperCase(), data.zip]
+      .filter(Boolean).join(", ")],
+    ["Cell", fmtPhone(data.cell)],
+    ["Other phone", data.alt ? fmtPhone(data.alt) : ""],
+    ["Email", data.email],
+    ["Emergency contact", data.ec1Name
+      ? data.ec1Name + (data.ec1Rel ? " (" + data.ec1Rel + ")" : "") + " · " + fmtPhone(data.ec1Phone)
+      : ""],
+    ["Second contact", data.ec2Name
+      ? data.ec2Name + (data.ec2Rel ? " (" + data.ec2Rel + ")" : "") + " · " + fmtPhone(data.ec2Phone)
+      : ""],
+    ["Medical note", data.medical ? "Given — kept confidential" : "None given"]
+  ];
+  $("review").innerHTML = rows.filter(function (r) { return r[1]; }).map(function (r) {
+    return "<div><dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd></div>";
+  }).join("");
+}
+
+var norm = function (s) { return String(s || "").toLowerCase().replace(/[^a-z]/g, ""); };
+function signatureOk() {
+  var typed = $("sig").value;
+  return norm(typed) === norm(data.name) && typed.trim().length > 2;
+}
+function refreshSign() {
+  var ok = signatureOk();
+  $("btnSign").disabled = !ok;
+  $("sigHint").textContent = ok
+    ? "That matches."
+    : 'Type it the same way you wrote it at the top: "' + (data.name || "") + '".';
+}
+
+/* ---------- submit -------------------------------------------------------- */
+function submit() {
+  $("btnSign").disabled = true;
+  $("btnSign").textContent = "Sending…";
+  $("signErr").innerHTML = "";
+
+  apiPost({
+    action: "newHire",
+    code: code,
+    packet: P.id,
+    packetTitle: P.title,
+    packetVersion: P.version,
+    name: data.name,
+    address: data.address, city: data.city,
+    state: (data.state || "").toUpperCase(), zip: data.zip,
+    cell: fmtPhone(data.cell), alt: data.alt ? fmtPhone(data.alt) : "",
+    email: data.email,
+    ec1Name: data.ec1Name, ec1Rel: data.ec1Rel, ec1Phone: fmtPhone(data.ec1Phone),
+    ec2Name: data.ec2Name, ec2Rel: data.ec2Rel,
+    ec2Phone: data.ec2Phone ? fmtPhone(data.ec2Phone) : "",
+    medical: data.medical || "",
+    agreements: CONFIG.POLICIES.map(function (p) {
+      return { id: p.id, title: p.title, affirmation: p.affirmation };
+    }),
+    affirmation: CONFIG.AFFIRMATION,
+    signedName: $("sig").value.trim(),
+    clientTime: new Date().toISOString(),
+    userAgent: navigator.userAgent
+  }).then(function (res) {
+    if (!res || !res.ok) throw new Error((res && res.error) || "unknown");
+    if (res.already) { showAlready(res); return; }
+    hide("stepSign");
+    setStep(5);
+    $("confNum").textContent = res.confirmation;
+    $("rName").textContent = data.name;
+    $("rWhen").textContent = res.recordedAtLocal || new Date().toLocaleString();
+    show("stepDone");
+    window.scrollTo(0, 0);
+  }).catch(function (err) {
+    $("btnSign").disabled = false;
+    $("btnSign").textContent = "Send my paperwork";
+    $("signErr").innerHTML = '<div class="note err"><b>That didn\'t go through.</b> ' +
+      "Check your signal and tap again. If it keeps failing, take a screenshot of this " +
+      "page and text it to the man who sent you the link. (" + esc(err.message || err) + ")</div>";
+  });
+}
+
+function showAlready(res) {
+  STEP_IDS.forEach(hide);
+  document.querySelector(".steps").style.display = "none";
+  $("aConf").textContent = res.confirmation || "—";
+  $("aWhen").textContent = res.recordedAtLocal || "—";
+  show("stepAlready");
+  window.scrollTo(0, 0);
+}
+
+/* ---------- start --------------------------------------------------------- */
+function start() {
+  var m = /[?&]c=([^&]+)/.exec(window.location.search);
+  code = m ? decodeURIComponent(m[1]) : "";
+  // Shape check only. The server is what decides whether a code is real — this
+  // is here so a mis-copied link says something useful instead of failing late.
+  if (!/^[A-Z]{3,4}-\d{8}-\d{4}-[A-Z0-9]{6}$/.test(code)) {
+    fatal("<b>This link is incomplete.</b> Open the link that was texted to you — it has your " +
+          "own code on the end. Don't share it; it's yours.");
+    return;
+  }
+
+  $("hdrTitle").textContent = "New Hire Paperwork";
+  $("packTitle").textContent = "Your information";
+  $("packBlurb").textContent = P.blurb;
+  $("medLabel").textContent = CONFIG.MEDICAL_PROMPT;
+  $("affirmText").textContent = CONFIG.AFFIRMATION;
+  $("verline").textContent = P.title + " · " + P.subtitle + " · version " + P.version;
+
+  $("youFields").innerHTML = groupHtml(CONFIG.FIELDS[0], false);
+  $("ecFields").innerHTML = CONFIG.FIELDS.slice(1).map(function (g) {
+    return groupHtml(g, true);
+  }).join("");
+  $("polList").innerHTML = CONFIG.POLICIES.map(policyHtml).join("");
+  CONFIG.POLICIES.forEach(wirePolicy);
+
+  $("btnYou").addEventListener("click", function () {
+    if (readGroup([CONFIG.FIELDS[0]])) goStep(2);
+  });
+  $("btnEc").addEventListener("click", function () {
+    if (!readGroup(CONFIG.FIELDS.slice(1))) return;
+    data.medical = $("medical").value.trim();
+    goStep(3);
+    // Now that the boxes have a height, settle which of them are short enough
+    // to count as already read.
+    setTimeout(function () { checkers.forEach(function (fn) { fn(); }); }, 60);
+  });
+  $("btnPol").addEventListener("click", function () { buildReview(); refreshSign(); goStep(4); });
+  $("backEc").addEventListener("click", function () { goStep(1); });
+  $("backPol").addEventListener("click", function () { goStep(2); });
+  $("backSign").addEventListener("click", function () { goStep(3); });
+  $("sig").addEventListener("input", refreshSign);
+  $("btnSign").addEventListener("click", function () { if (signatureOk()) submit(); });
+
+  hide("boot");
+  show("app");
+  goStep(1);
+}
+
+document.addEventListener("DOMContentLoaded", start);
+</script>
+</body>
+</html>
